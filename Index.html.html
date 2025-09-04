@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AeroNova — Fly the Future</title>
+  <meta name="description" content="AeroNova: Book flights, manage trips, join loyalty, and explore destinations with a modern, fast, and secure airline experience." />
+  <meta name="theme-color" content="#0d1224"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    /* ===================
+       AERONOVA THEME
+       =================== */
+    :root{
+      --bg: #0b0f19;          /* deep space */
+      --bg-soft:#10162b;      /* soft panel */
+      --card:#0f172a;         /* slate */
+      --primary:#6ee7ff;      /* neon sky */
+      --primary-2:#7c3aed;    /* plasma purple */
+      --text:#e5e7eb;
+      --muted:#9aa3b2;
+      --accent:#22c55e;       /* success */
+      --danger:#ef4444;       /* danger */
+      --warning:#f59e0b;      /* warning */
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --glass: rgba(255,255,255,.06);
+      --glass-stroke: rgba(255,255,255,.12);
+      --radius: 18px;
+      --radius-lg: 24px;
+      --radius-sm: 12px;
+      --ease: cubic-bezier(.2,.8,.2,1);
+    }
+    [data-theme="dark"]:root{ /* future extensibility */ }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,Helvetica,sans-serif; 
+      color:var(--text); background: radial-gradient(1200px 800px at 80% -10%, rgba(124,58,237,.35), transparent 60%),
+                         radial-gradient(1000px 600px at -10% 110%, rgba(110,231,255,.25), transparent 60%),
+                         var(--bg);
+      line-height:1.5; overflow-x:hidden;
+    }
+    a{color:var(--primary)} a:hover{opacity:.9}
+    .container{width:min(1200px, 92vw); margin:0 auto}
+
+    /* ===== NAVBAR ===== */
+    .nav{position:sticky; top:0; z-index:50; backdrop-filter: blur(10px); background:linear-gradient(180deg, rgba(16,22,43,.85), rgba(16,22,43,.45)); border-bottom:1px solid var(--glass-stroke)}
+    .nav-inner{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 0}
+    .brand{display:flex; align-items:center; gap:10px; text-decoration:none}
+    .logo{width:36px; height:36px; display:grid; place-items:center; border-radius:12px; background:linear-gradient(135deg, var(--primary), var(--primary-2)); box-shadow: var(--shadow)}
+    .logo svg{filter:drop-shadow(0 4px 12px rgba(124,58,237,.35))}
+    .brand span{font-weight:800; letter-spacing:.4px}
+
+    .nav-links{display:flex; flex-wrap:wrap; gap:8px}
+    .nav-links a{padding:10px 14px; border-radius:999px; text-decoration:none; color:var(--text); border:1px solid transparent}
+    .nav-links a:hover{border-color:var(--glass-stroke); background:var(--glass)}
+
+    .nav-cta{display:flex; align-items:center; gap:8px}
+    .btn{--p: var(--primary); display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:999px; border:1px solid var(--glass-stroke); background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01)); color:var(--text); text-decoration:none; transition:.2s var(--ease);}
+    .btn:hover{transform:translateY(-1px); box-shadow:0 8px 20px rgba(124,58,237,.2), inset 0 0 0 1px rgba(255,255,255,.08)}
+    .btn.primary{background:linear-gradient(135deg, var(--primary), var(--primary-2)); color:#0b0f19; font-weight:700; border:none}
+
+    .lang-curr{display:flex; gap:6px}
+    .chip{padding:8px 10px; border-radius:999px; border:1px solid var(--glass-stroke); background:var(--glass); font-size:12px; cursor:pointer}
+
+    /* ===== HERO ===== */
+    .hero{position:relative; padding:72px 0 48px;}
+    .hero-grid{display:grid; grid-template-columns:1.2fr .8fr; gap:28px}
+    .headline{font-size:clamp(32px, 4vw, 56px); line-height:1.07; font-weight:900; letter-spacing:-.5px}
+    .subtitle{color:var(--muted)}
+    .hero-card{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01)); border:1px solid var(--glass-stroke); border-radius:var(--radius-lg); padding:18px; box-shadow:var(--shadow)}
+
+    /* ===== BOOKING WIZARD ===== */
+    .tabs{display:flex; gap:8px; margin-bottom:12px}
+    .tab{padding:10px 12px; border-radius:999px; border:1px solid var(--glass-stroke); background:var(--glass); cursor:pointer; user-select:none}
+    .tab.active{background:linear-gradient(135deg, rgba(110,231,255,.3), rgba(124,58,237,.3)); border-color:transparent}
+    .form-grid{display:grid; gap:10px; grid-template-columns:repeat(6,1fr)}
+    .field{grid-column: span 2;}
+    .field.small{grid-column: span 1}
+    .field.full{grid-column:1/-1}
+    label{display:block; font-size:12px; color:var(--muted); margin:4px 2px}
+    input,select{width:100%; padding:12px; border-radius:12px; background:#0c142b; color:var(--text); border:1px solid #1d2746; outline:none}
+    input:focus,select:focus{border-color:var(--primary)}
+    .actions{display:flex; gap:12px; justify-content:flex-end; margin-top:8px}
+
+    .pill{display:inline-flex; gap:8px; align-items:center; background:var(--glass); border:1px solid var(--glass-stroke); padding:8px 12px; border-radius:999px; font-size:12px}
+
+    /* ===== PANELS ===== */
+    section{padding:56px 0}
+    .panel{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01)); border:1px solid var(--glass-stroke); border-radius:var(--radius); padding:22px}
+    h2{font-size:28px; margin:0 0 8px}
+    .kpis{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:14px}
+    .kpi{background:var(--bg-soft); border:1px solid var(--glass-stroke); padding:16px; border-radius:16px}
+
+    /* ===== CARDS ===== */
+    .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+    .card{background:var(--bg-soft); border:1px solid var(--glass-stroke); padding:18px; border-radius:16px; min-height:160px}
+
+    /* ===== SUPPORT CHAT ===== */
+    .chat{display:flex; flex-direction:column; gap:10px; height:320px}
+    .chat-log{flex:1; overflow:auto; border:1px solid var(--glass-stroke); border-radius:14px; padding:12px; background:#0d1428}
+    .msg{max-width:70%; margin:6px 0; padding:10px 12px; border-radius:14px}
+    .msg.user{margin-left:auto; background:linear-gradient(135deg, var(--primary), var(--primary-2)); color:#061021}
+    .msg.bot{background:rgba(255,255,255,.06); border:1px solid var(--glass-stroke)}
+
+    /* ===== FOOTER ===== */
+    footer{padding:48px 0; border-top:1px solid var(--glass-stroke); background:linear-gradient(180deg, rgba(16,22,43,.6), rgba(16,22,43,.2))}
+    .footer-grid{display:grid; grid-template-columns:2fr repeat(4,1fr); gap:16px}
+    .copyright{color:var(--muted); font-size:12px; margin-top:12px}
+
+    /* ===== UTIL ===== */
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    .hide{display:none!important}
+    .flex{display:flex;gap:10px;align-items:center}
+    .center{display:grid; place-items:center}
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 980px){
+      .hero-grid{grid-template-columns:1fr}
+      .form-grid{grid-template-columns:repeat(2,1fr)}
+      .field,.field.small{grid-column: span 1}
+      .kpis{grid-template-columns:repeat(2,1fr)}
+      .grid{grid-template-columns:1fr}
+      .footer-grid{grid-template-columns:1fr 1fr}
+    }
+  </style>
+</head>
+<body>
+  <a href="#content" class="sr-only">Skip to content</a>
+  <!-- ================= NAVBAR ================= -->
+  <nav class="nav" aria-label="Primary">
+    <div class="container nav-inner">
+      <a class="brand" href="#" aria-label="AeroNova Home">
+        <span class="logo" aria-hidden="true">
+          <!-- Futuristic A logo -->
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M12 2l9 20h-4.2l-1.9-4.6H9.1L7.2 22H3L12 2zM10.2 13h3.6L12 8.7 10.2 13z" fill="#04121f"></path>
+          </svg>
+        </span>
+        <span>AeroNova</span>
+      </a>
+      <div class="nav-links" role="navigation" aria-label="Main links">
+        <a href="#book">Book</a>
+        <a href="#manage">Manage</a>
+        <a href="#support">Support</a>
+        <a href="#loyalty">Loyalty</a>
+        <a href="#about">About</a>
+        <a href="#partners">Partners</a>
+        <a href="#news">News</a>
+      </div>
+      <div class="nav-cta">
+        <div class="lang-curr">
+          <button class="chip" id="langBtn" aria-haspopup="listbox" aria-expanded="false">EN</button>
+          <button class="chip" id="currBtn" aria-haspopup="listbox" aria-expanded="false">USD $</button>
+          <button class="chip" id="themeBtn" title="Toggle theme">☾</button>
+        </div>
+        <a href="#signin" id="openAuth" class="btn">Sign in</a>
+        <a href="#book" class="btn primary">Book flight</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ================= HERO / BOOKING ================= -->
+  <header class="hero" id="book">
+    <div class="container hero-grid">
+      <div>
+        <h1 class="headline" data-i18n="hero_title">Fly the Future with AeroNova ✈️</h1>
+        <p class="subtitle" data-i18n="hero_sub">Hyper-modern comfort, planet-friendly operations, and routes that actually work for you.</p>
+        <div class="pill" aria-live="polite"><span>⚡</span> <span id="dealBanner">Limited: 15% off Lagos ⇄ London this week</span></div>
+        <div class="kpis">
+          <div class="kpi"><strong id="kpiOnTime">97.2%</strong><div>On-time arrivals</div></div>
+          <div class="kpi"><strong id="kpiSust">-28%</strong><div>Avg. CO₂ per pax vs 2019</div></div>
+          <div class="kpi"><strong id="kpiNps">71</strong><div>Customer NPS</div></div>
+          <div class="kpi"><strong id="kpiCountries">62</strong><div>Countries served</div></div>
+        </div>
+      </div>
+
+      <!-- Booking widget -->
+      <aside class="hero-card" aria-labelledby="bookingTitle">
+        <h2 id="bookingTitle" style="margin:0 0 10px">Book a flight</h2>
+        <div class="tabs" role="tablist">
+          <button class="tab active" role="tab" aria-selected="true" data-trip="round" data-i18n="roundtrip">Round Trip</button>
+          <button class="tab" role="tab" aria-selected="false" data-trip="oneway" data-i18n="oneway">One Way</button>
+          <button class="tab" role="tab" aria-selected="false" data-trip="multi" data-i18n="multi">Multi‑City</button>
+        </div>
+        <form id="bookingForm" autocomplete="on">
+          <div class="form-grid">
+            <div class="field"><label data-i18n="from">From</label>
+              <input list="airports" id="from" required placeholder="LOS / Lagos" inputmode="text"/>
+            </div>
+            <div class="field"><label data-i18n="to">To</label>
+              <input list="airports" id="to" required placeholder="LHR / London"/>
+            </div>
+            <datalist id="airports">
+              <option value="LOS — Lagos (Murtala Muhammed)"></option>
+              <option value="ABV — Abuja (Nnamdi Azikiwe)"></option>
+              <option value="LHR — London Heathrow"></option>
+              <option value="LGW — London Gatwick"></option>
+              <option value="JFK — New York JFK"></option>
+              <option value="DXB — Dubai"></option>
+              <option value="CDG — Paris Charles de Gaulle"></option>
+            </datalist>
+            <div class="field"><label data-i18n="depart">Depart</label>
+              <input type="date" id="depart" required />
+            </div>
+            <div class="field" id="retField"><label data-i18n="return">Return</label>
+              <input type="date" id="return" />
+            </div>
+            <div class="field small"><label data-i18n="pax">Passengers</label>
+              <select id="pax">
+                <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+              </select>
+            </div>
+            <div class="field small"><label data-i18n="cabin">Cabin</label>
+              <select id="cabin">
+                <option value="ECO">Economy</option>
+                <option value="PRE">Premium</option>
+                <option value="BUS">Business</option>
+                <option value="FIR">First</option>
+              </select>
+            </div>
+            <div class="field full">
+              <div class="actions">
+                <button type="button" id="btnSwap" class="btn" aria-label="Swap origin and destination">⇅ Swap</button>
+                <button type="reset" class="btn" id="btnReset">Reset</button>
+                <button type="submit" class="btn primary" id="btnSearch">Search flights</button>
+              </div>
+            </div>
+          </div>
+        </form>
+        <div id="searchResults" class="panel" style="margin-top:12px; display:none" aria-live="polite"></div>
+      </aside>
+    </div>
+  </header>
+
+  <main id="content" class="container">
+    <!-- ========== Manage Booking ========== -->
+    <section id="manage">
+      <div class="grid">
+        <div class="card">
+          <h2>Manage booking</h2>
+          <p class="subtitle">View itinerary, choose seats, add bags, or request changes.</p>
+          <form id="manageForm" class="form-grid">
+            <div class="field"><label>Booking ref (PNR)</label><input id="pnr" placeholder="ABC123" required/></div>
+            <div class="field"><label>Last name</label><input id="lname" placeholder="Doe" required/></div>
+            <div class="field full actions">
+              <button class="btn" type="button" id="btnCheckIn">Check in</button>
+              <button class="btn primary" type="submit">Find booking</button>
+            </div>
+          </form>
+          <div id="manageResults" class="panel hide"></div>
+        </div>
+        <div class="card">
+          <h2>Travel requirements</h2>
+          <ul>
+            <li>Passport valid 6+ months, visas as required.</li>
+            <li>Smart baggage only (remove lithium batteries).</li>
+            <li>Arrive 3h intl / 2h domestic before departure.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Disruption center</h2>
+          <p>Get rebooked automatically if a delay/cancel happens. We’ll push options via SMS/email and in your account.</p>
+          <div class="flex">
+            <span class="pill">实时 Real‑time alerts</span>
+            <span class="pill">Auto‑rebooking</span>
+            <span class="pill">EU/UK/NG compensation guidance</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== Customer Support & Engagement ========== -->
+    <section id="support">
+      <div class="grid">
+        <div class="card">
+          <h2>Customer support</h2>
+          <div class="chat" aria-live="polite">
+            <div id="chatLog" class="chat-log" aria-label="Chat transcript"></div>
+            <div class="flex">
+              <input id="chatInput" placeholder="Ask about baggage, refunds, special assistance…"/>
+              <button id="chatSend" class="btn">Send</button>
+              <button id="chatAI" class="btn">Assist AI</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Engagement</h2>
+          <ul>
+            <li>Destinations hub with guides & local tips.</li>
+            <li>In‑flight portal for Wi‑Fi, entertainment, and food pre‑orders.</li>
+            <li>Feedback micro‑surveys after each flight.</li>
+          </ul>
+          <div class="panel">Subscribe: <input id="emailSub" placeholder="you@example.com"/> <button id="btnSub" class="btn">Join</button></div>
+          <div id="subMsg" class="subtitle" aria-live="polite"></div>
+        </div>
+        <div class="card">
+          <h2 id="loyalty">User accounts & loyalty</h2>
+          <p>Sign in to track miles, status, and perks. Earn on partner airlines, hotels, and cards.</p>
+          <div class="panel">
+            <button class="btn" id="viewMiles">View Miles</button>
+            <button class="btn" id="redeem">Redeem</button>
+            <button class="btn primary" id="join">Join AeroNova One</button>
+            <div id="loyaltyPanel" class="subtitle" style="margin-top:10px"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== Information Pages ========== -->
+    <section id="about">
+      <div class="grid">
+        <div class="card">
+          <h2>About AeroNova</h2>
+          <p>We’re a next‑gen carrier built on three pillars: reliability, comfort, and responsibility. Our fleet blends efficiency with cabin innovations like quieter cabins, smart lighting, and personal climate zones.</p>
+          <div class="panel">
+            <strong>Security & compliance</strong>
+            <ul>
+              <li>Payments via PCI‑DSS compliant providers; never store raw card data.</li>
+              <li>GDPR/NDPR aligned privacy program; consent and data portability supported.</li>
+              <li>SSO & MFA for accounts; TLS 1.3 HSTS; rate limiting & WAF at edge.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Performance & Tech</h2>
+          <ul>
+            <li>Edge caching, image lazy‑load, service worker offline shell.</li>
+            <li>Accessibility AA+, semantic HTML, keyboard‑first UX.</li>
+            <li>Observability: Core Web Vitals + error telemetry.</li>
+          </ul>
+          <div class="panel"><span class="pill">PWA Ready</span> <span class="pill">Intl & Currency</span> <span class="pill">Localized content</span></div>
+        </div>
+        <div class="card" id="partners">
+          <h2>Business & Partnerships</h2>
+          <p>Interline + codeshare ready. Partner with AeroNova for corporate travel, cargo, and co‑marketing.</p>
+          <div class="panel">
+            <form id="partnerForm" class="form-grid">
+              <div class="field"><label>Company</label><input id="pCompany" placeholder="Acme Logistics"/></div>
+              <div class="field"><label>Contact email</label><input id="pEmail" placeholder="biz@company.com"/></div>
+              <div class="field full"><label>Notes</label><input id="pNotes" placeholder="Tell us what you have in mind"/></div>
+              <div class="field full actions"><button class="btn primary" type="submit">Propose partnership</button></div>
+            </form>
+            <div id="partnerMsg" class="subtitle"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== Marketing & Growth / News ========== -->
+    <section id="news">
+      <div class="grid">
+        <div class="card">
+          <h2>Latest updates</h2>
+          <div id="newsList" class="panel">Loading news…</div>
+        </div>
+        <div class="card">
+          <h2>Promotions</h2>
+          <ul id="promoList"></ul>
+          <div class="panel">
+            <strong>Referral</strong>
+            <p>Invite a friend, both get 2,000 miles after their first trip.</p>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Experience</h2>
+          <ul>
+            <li>Calm lighting with circadian scheduling.</li>
+            <li>Seat-back 4K, Bluetooth pairing, USB‑C 60W.</li>
+            <li>Cabin HEPA+ filters, fresh air every 2–3 minutes.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========== AUTH MODAL (demo) ========== -->
+  <dialog id="authModal" style="border:none; border-radius:18px; padding:0; width:min(520px,90vw); background:var(--bg-soft); color:var(--text)">
+    <form method="dialog" style="padding:18px">
+      <header class="flex" style="justify-content:space-between">
+        <h3 style="margin:0">Welcome back</h3>
+        <button class="btn" value="cancel">✕</button>
+      </header>
+      <div class="form-grid" style="margin-top:10px">
+        <div class="field full"><label>Email</label><input id="authEmail" type="email" required placeholder="you@aeronova.com"/></div>
+        <div class="field full"><label>Password</label><input id="authPass" type="password" required placeholder="••••••••"/></div>
+        <div class="field full actions">
+          <button class="btn" id="btnMFA" type="button">Enable MFA</button>
+          <button class="btn primary" value="signin">Sign in</button>
+        </div>
+        <div class="subtitle" id="authMsg"></div>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ========== COOKIE CONSENT ========== -->
+  <div id="cookieBar" class="panel" style="position:fixed; bottom:18px; right:18px; width:min(560px, 92vw); display:none; background:#0e1530">
+    <strong>Cookies & Privacy</strong>
+    <p>We use essentials for site functionality and optional analytics to improve experience. Customize to proceed.</p>
+    <div class="actions">
+      <button class="btn" id="cookiePrefs">Preferences</button>
+      <button class="btn primary" id="cookieAccept">Accept all</button>
+    </div>
+  </div>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script>
+    // =====================
+    // State & utilities
+    // =====================
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
+    const store = {
+      save:(k,v)=>localStorage.setItem(k, JSON.stringify(v)),
+      get:(k,d=null)=>{try{return JSON.parse(localStorage.getItem(k)) ?? d}catch{return d}},
+      del:(k)=>localStorage.removeItem(k)
+    };
+
+    // =====================
+    // THEME
+    // =====================
+    const themeBtn = $('#themeBtn');
+    const setTheme = (t) => {document.documentElement.setAttribute('data-theme', t); store.save('theme', t)}
+    setTheme(store.get('theme','light'));
+    themeBtn.addEventListener('click', ()=> setTheme(document.documentElement.getAttribute('data-theme')==='light'?'dark':'light'));
+
+    // =====================
+    // LANGUAGE & CURRENCY (Multilingual & Global)
+    // =====================
+    const i18n = {
+      EN:{hero_title:"Fly the Future with AeroNova ✈️", hero_sub:"Hyper-modern comfort, planet-friendly operations, and routes that actually work for you.", roundtrip:"Round Trip", oneway:"One Way", multi:"Multi‑City", from:"From", to:"To", depart:"Depart", return:"Return", pax:"Passengers", cabin:"Cabin"},
+      FR:{hero_title:"Volez vers le futur avec AeroNova ✈️", hero_sub:"Confort ultra‑moderne, opérations écoresponsables et itinéraires faits pour vous.", roundtrip:"Aller‑retour", oneway:"Aller simple", multi:"Multi‑villes", from:"Origine", to:"Destination", depart:"Départ", return:"Retour", pax:"Passagers", cabin:"Cabine"},
+      ES:{hero_title:"Vuela al futuro con AeroNova ✈️", hero_sub:"Comodidad de vanguardia, operaciones sostenibles y rutas que te convienen.", roundtrip:"Ida y vuelta", oneway:"Solo ida", multi:"Multiciudad", from:"Origen", to:"Destino", depart:"Salida", return:"Regreso", pax:"Pasajeros", cabin:"Cabina"}
+    }
+    let LANG = store.get('lang','EN');
+    const CURRENCIES = {"USD":"$","EUR":"€","NGN":"₦","GBP":"£"};
+    let CURR = store.get('curr','USD');
+    const applyI18n=()=>{
+      $$('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n'); el.textContent = i18n[LANG][k] || el.textContent})
+      $('#langBtn').textContent = LANG;
+      $('#currBtn').textContent = `${CURR} ${CURRENCIES[CURR]}`;
+    }
+    $('#langBtn').addEventListener('click',()=>{LANG = LANG==='EN'?'FR':LANG==='FR'?'ES':'EN'; store.save('lang',LANG); applyI18n()});
+    $('#currBtn').addEventListener('click',()=>{const keys=Object.keys(CURRENCIES); CURR = keys[(keys.indexOf(CURR)+1)%keys.length]; store.save('curr',CURR); applyI18n()});
+    applyI18n();
+
+    // =====================
+    // Booking form logic
+    // =====================
+    const tabs = $$('.tab');
+    const retField = $('#retField');
+    tabs.forEach(t=> t.addEventListener('click',()=>{
+      tabs.forEach(x=>x.classList.remove('active')); t.classList.add('active');
+      const trip = t.dataset.trip; retField.style.display = trip==='oneway'? 'none':'block';
+    }))
+
+    $('#btnSwap').addEventListener('click', ()=>{const a=$('#from'), b=$('#to'); const tmp=a.value; a.value=b.value; b.value=tmp});
+
+    const mockPrice = (base) => {
+      const cur = {USD:1, EUR:0.92, NGN:1600, GBP:0.78}[CURR] || 1; return Math.round(base*cur);
+    }
+
+    $('#bookingForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const query = {from:$('#from').value, to:$('#to').value, depart:$('#depart').value, ret:$('#return').value, pax:+$('#pax').value, cabin:$('#cabin').value, curr:CURR};
+      store.save('lastSearch',query);
+      const flights=[
+        {code:'AN204', from:'LOS', to:'LHR', time:'22:15 → 05:40', dur:'7h 25m', stops:0, base:650, aircraft:'A350-1000'},
+        {code:'AN318', from:'LOS', to:'LHR', time:'09:30 → 16:20', dur:'7h 50m', stops:0, base:590, aircraft:'A330neo'},
+        {code:'AN512', from:'LOS', to:'LHR', time:'14:05 → 21:15', dur:'8h 10m', stops:0, base:610, aircraft:'B787-10'}
+      ];
+      const html = [
+        `<div class="flex" style="justify-content:space-between"><div><strong>${query.from}</strong> → <strong>${query.to}</strong> · ${query.depart}${query.ret?` — ${query.ret}`:''} · ${query.pax} pax · ${query.cabin}</div><div><button class='btn' id='saveQuote'>Save quote</button></div></div>`,
+        ...flights.map(f=>`<div class="panel" style="margin-top:10px"><div class="flex" style="justify-content:space-between"><div><strong>${f.code}</strong> · ${f.time} · ${f.dur} · ${f.stops?'Via':'Non‑stop'} · ${f.aircraft}</div><div><strong>${CURRENCIES[CURR]}${mockPrice(f.base)}</strong></div></div><div class="actions" style="justify-content:flex-end; margin-top:8px"><button class='btn'>Details</button><button class='btn primary bookBtn' data-code='${f.code}'>Book</button></div></div>`)
+      ].join('');
+      const box = $('#searchResults'); box.innerHTML = html; box.style.display='block';
+      box.querySelector('#saveQuote').addEventListener('click',()=>{store.save('quote', {query, flights}); alert('Quote saved to your browser.')}});
+      box.querySelectorAll('.bookBtn').forEach(btn=>btn.addEventListener('click',()=>{
+        alert(`Proceeding to secure payment for ${btn.dataset.code}. (Demo)`);
+      }));
+    ;
+
+    // =====================
+    // Manage booking (mock)
+    // =====================
+    $('#manageForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const ref = $('#pnr').value.trim().toUpperCase();
+      const last = $('#lname').value.trim();
+      const data = store.get('ticket_'+ref);
+      const el = $('#manageResults');
+      if(!data){ el.classList.remove('hide'); el.innerHTML = `<div class='panel' style='border-color:var(--warning)'>No booking found for <strong>${ref}</strong>. If you booked via agent, enter their PNR.</div>`; return; }
+      el.classList.remove('hide');
+      el.innerHTML = `<div class='panel'><h3>Itinerary ${ref}</h3><p>${data.from} → ${data.to} · ${data.date} · Seat ${data.seat || '—'}</p><div class='actions'><button class='btn' id='seatSel'>Choose seat</button><button class='btn' id='addBag'>Add bag</button><button class='btn primary' id='getBP'>Get boarding pass</button></div></div>`;
+      $('#seatSel').onclick = ()=> alert('Seat map loading… (demo)');
+      $('#addBag').onclick = ()=> alert('Added 1 x 23kg bag. (demo)');
+      $('#getBP').onclick = ()=> alert('Boarding pass sent to your email. (demo)');
+    });
+    $('#btnCheckIn').addEventListener('click', ()=> alert('Online check‑in opens 24h before departure.'))
+
+    // =====================
+    // Support Chat
+    // =====================
+    const chatLog = $('#chatLog');
+    function pushMsg(text, who='bot'){ const node = document.createElement('div'); node.className = `msg ${who}`; node.textContent = text; chatLog.appendChild(node); chatLog.scrollTop = chatLog.scrollHeight; }
+    $('#chatSend').addEventListener('click', ()=>{ const t=$('#chatInput').value.trim(); if(!t) return; pushMsg(t,'user'); setTimeout(()=>pushMsg('Thanks! A specialist will reply shortly.'), 400)});
+    $('#chatAI').addEventListener('click', ()=>{ pushMsg('AI: Baggage allowance — Economy 23kg + 7kg cabin. Changes allowed on Flex. (Demo)')});
+
+    // =====================
+    // Loyalty demo
+    // =====================
+    $('#viewMiles').onclick = ()=> $('#loyaltyPanel').textContent = 'Miles: 12,480 · Status: Silver (8 segments to Gold)';
+    $('#redeem').onclick = ()=> $('#loyaltyPanel').textContent = 'Use miles on Lagos ⇄ London from 22,500 + taxes.';
+    $('#join').onclick = ()=> $('#loyaltyPanel').textContent = 'Joined! Welcome to AeroNova One. Check your inbox.';
+
+    // =====================
+    // Auth modal & MFA mock
+    // =====================
+    const auth = $('#authModal');
+    $('#openAuth').addEventListener('click', (e)=>{ e.preventDefault(); auth.showModal(); });
+    $('#btnMFA').addEventListener('click', ()=>{ const code = Math.random().toString().slice(2,8); store.save('mfa', code); $('#authMsg').textContent = `MFA enabled. Your one‑time setup code: ${code}`; });
+
+    // =====================
+    // Cookie consent
+    // =====================
+    const consent = store.get('cookieConsent');
+    if(!consent) $('#cookieBar').style.display='block';
+    $('#cookieAccept').onclick=()=>{store.save('cookieConsent',{all:true,ts:Date.now()}); $('#cookieBar').remove()};
+    $('#cookiePrefs').onclick=()=>{alert('Set analytics/ads toggles here. (demo)')};
+
+    // =====================
+    // News & promos (static mock)
+    // =====================
+    const news = [
+      {date:'2025-08-20', title:'AeroNova opens Lagos ↔ New York JFK non‑stop', tag:'Network'},
+      {date:'2025-07-02', title:'Cabin refresh: Ultra‑quiet A350 with Bluetooth pairing', tag:'Fleet'},
+      {date:'2025-06-11', title:'Sustainable aviation fuel purchase expanded by 40%', tag:'Sustainability'}
+    ];
+    $('#newsList').innerHTML = news.map(n=>`<div class='panel'><div class='flex' style='justify-content:space-between'><strong>${n.title}</strong><span class='pill'>${n.tag}</span></div><div class='subtitle'>${new Date(n.date).toDateString()}</div></div>`).join('');
+    const promos = [
+      'Student fares: save up to 20% + 1 extra bag',
+      'Weekend flash: Lagos ⇄ Accra from NGN 89,900',
+      'Upgrade bid program now live'
+    ];
+    $('#promoList').innerHTML = promos.map(p=>`<li>${p}</li>`).join('');
+
+    // =====================
+    // Service Worker (inline via Blob for single‑file demo)
+    // =====================
+    if('serviceWorker' in navigator){
+      const swCode = `self.addEventListener('install',e=>e.waitUntil(caches.open('aeronova-v1').then(c=>c.addAll(['/']))));self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))})`;
+      const blob = new Blob([swCode], {type:'text/javascript'});
+      const swUrl = URL.createObjectURL(blob);
+      navigator.serviceWorker.register(swUrl).catch(()=>{});
+    }
+
+    // =====================
+    // Accessibility & UX niceties
+    // =====================
+    // Respect reduced motion
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      document.querySelectorAll('*').forEach(el=>{el.style.scrollBehavior='auto'});
+    }
+
+    // Simple intersection reveal
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{if(e.isIntersecting){ e.target.animate([{opacity:0, transform:'translateY(8px)'},{opacity:1, transform:'none'}], {duration:500, easing:'ease-out'}); io.unobserve(e.target);}})
+    }, {threshold:.2});
+    $$('.card,.panel,.kpi').forEach(el=>io.observe(el));
+
+    // =====================
+    // Marketing attribution demo
+    // =====================
+    const params = new URLSearchParams(location.search);
+    if(params.get('ref')) store.save('ref', {src:params.get('ref'), ts:Date.now()});
+
+  </script>
+</body>
+</html>
